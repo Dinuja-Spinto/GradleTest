@@ -53,3 +53,11 @@ tasks.register<Copy>("copyReportsDirForArchiving") {
     from(layout.projectDirectory.dir("reports"))
     into(layout.buildDirectory.dir("toArchive5"))
 }
+
+//Copying an entire directory, including itself
+tasks.register<Copy>("copyReportsDirForArchiving2") {
+    from(layout.buildDirectory) {
+        include("toArchive5/**")
+    }
+    into(layout.buildDirectory.dir("toArchive6"))
+}
