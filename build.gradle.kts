@@ -33,3 +33,10 @@ tasks.register<Copy>("copyReportsForArchiving") {
     from(layout.projectDirectory.file("reports/my-report.pdf"), layout.projectDirectory.file("src/docs/manual.pdf"))
     into(layout.buildDirectory.dir("reports"))
 }
+
+//copy all the (**specific files in the dir)  PDFs in a directory
+tasks.register<Copy>("copyPdfReportsForArchiving") {
+    from(layout.projectDirectory.dir("reports"))
+    include("*.pdf")
+    into(layout.buildDirectory.dir("toArchive3"))
+}
