@@ -17,3 +17,8 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
+tasks.register<Copy>("copyReport") {
+    from(layout.projectDirectory.file("reports/my-report.pdf"))
+    into(layout.projectDirectory.dir("toArchive"))
+}
