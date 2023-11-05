@@ -47,3 +47,9 @@ tasks.register<Copy>("copyAllPdfReportsForArchiving") {
     include("**/*.pdf")
     into(layout.buildDirectory.dir("toArchive4"))
 }
+
+//Copying an entire directory
+tasks.register<Copy>("copyReportsDirForArchiving") {
+    from(layout.projectDirectory.dir("reports"))
+    into(layout.buildDirectory.dir("toArchive5"))
+}
