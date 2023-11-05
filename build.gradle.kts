@@ -1,9 +1,10 @@
 plugins {
     id("java")
+    base
 }
 
 group = "org.gradleTest"
-version = "1.0-SNAPSHOT"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -64,8 +65,20 @@ tasks.register<Copy>("copyReportsDirForArchiving2") {
 
 //Archiving a directory as a ZIP
 tasks.register<Zip>("packageDistribution") {
-    archiveFileName = "my-distribution.zip"
+    archiveFileName = "my-distribution2.zip"
     destinationDirectory = layout.buildDirectory.dir("dist")
 
     from(layout.buildDirectory.dir("toArchive"))
+}
+
+//Using the Base Plugin for its archive name convention
+tasks.register<Zip>("packageDistribution2") {
+    from(layout.projectDirectory.dir("toArchive")) {
+        exclude("**/*.pdf")
+    }
+
+    from(layout.projectDirectory.dir("toArchive5")) {
+        include("**/*.pdf")
+        into("docs")
+    }
 }
