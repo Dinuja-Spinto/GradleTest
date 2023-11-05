@@ -88,3 +88,15 @@ tasks.register<Copy>("unpackFiles") {
     from(zipTree("src/main/resources/thirdPartyResources.zip"))
     into(layout.buildDirectory.dir("resources"))
 }
+
+//Unpacking a subset of a ZIP file
+tasks.register<Copy>("unpackLibsDirectory") {
+    from(zipTree("src/main/resources/thirdPartyResources2.zip")) {
+        include("lib/**")
+        eachFile {
+            relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())
+        }
+        includeEmptyDirs = false
+    }
+    into(layout.buildDirectory.dir("reso"))
+}
