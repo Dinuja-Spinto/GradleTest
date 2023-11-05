@@ -82,3 +82,9 @@ tasks.register<Zip>("packageDistribution2") {
         into("docs")
     }
 }
+
+//Unpacking a ZIP file
+tasks.register<Copy>("unpackFiles") {
+    from(zipTree("src/main/resources/thirdPartyResources.zip"))
+    into(layout.buildDirectory.dir("resources"))
+}
