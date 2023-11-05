@@ -61,3 +61,11 @@ tasks.register<Copy>("copyReportsDirForArchiving2") {
     }
     into(layout.buildDirectory.dir("toArchive6"))
 }
+
+//Archiving a directory as a ZIP
+tasks.register<Zip>("packageDistribution") {
+    archiveFileName = "my-distribution.zip"
+    destinationDirectory = layout.buildDirectory.dir("dist")
+
+    from(layout.buildDirectory.dir("toArchive"))
+}
