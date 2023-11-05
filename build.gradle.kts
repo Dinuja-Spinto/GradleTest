@@ -40,3 +40,10 @@ tasks.register<Copy>("copyPdfReportsForArchiving") {
     include("*.pdf")
     into(layout.buildDirectory.dir("toArchive3"))
 }
+
+//include files in subDirectories
+tasks.register<Copy>("copyAllPdfReportsForArchiving") {
+    from(layout.projectDirectory.dir("reports"))
+    include("**/*.pdf")
+    into(layout.buildDirectory.dir("toArchive4"))
+}
