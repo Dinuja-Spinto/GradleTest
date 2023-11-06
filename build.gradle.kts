@@ -3,6 +3,7 @@ import java.nio.file.Paths
 import java.util.*
 import org.apache.tools.ant.filters.FixCrLfFilter
 import org.apache.tools.ant.filters.ReplaceTokens
+import java.time.Duration
 
 plugins {
     id("java")
@@ -562,5 +563,158 @@ tasks.register("echoNames") {
         println("Project name: $projectNameString")
         println(archiveFileName.get())
         println(myOtherArchiveFileName.get())
+    }
+}
+
+//--Developing Gradle Tasks--
+
+//Defining tasks using strings for task names
+tasks.register("hello") {
+    doLast {
+        println("hello")
+    }
+}
+
+//Assigning tasks to variables with DSL specific syntax
+val hello2 by tasks.registering {
+    doLast {
+        println("hello2")
+    }
+}
+
+//Accessing tasks via tasks collection
+tasks.register("hello3")
+tasks.register<Copy>("copy")
+
+//println(tasks.named("hello3").get().name) // or just 'tasks.hello' if the task was added by a plugin
+
+//println(tasks.named<Copy>("copy").get().destinationDir)
+//
+//tasks.withType<Tar>().configureEach {
+//    enabled = true
+//}
+//
+//tasks.register("test2") {
+//    dependsOn(tasks.withType<Copy>())
+//}
+
+//Task class with @Inject constructor
+abstract class CustomTask @Inject constructor(
+        private val message: String,
+        private val number: Int
+) : DefaultTask()
+//Registering a task with constructor arguments using TaskContainer
+tasks.register<CustomTask>("myTask", "hello", 42)
+//println(tasks.named("hello3"))
+
+//Adding dependency on task from another project
+/*
+project("project-a") {
+    tasks.register("taskX") {
+        dependsOn(":project-b:taskY")
+        doLast {
+            println("taskX")
+        }
+    }
+}
+
+project("project-b") {
+    tasks.register("taskY") {
+        doLast {
+            println("taskY")
+        }
+    }
+}*/
+//Adding dependency using task provider object
+/*val taskX by tasks.registering {
+    doLast {
+        println("taskX")
+    }
+}
+
+val taskY by tasks.registering {
+    doLast {
+        println("taskY")
+    }
+}
+
+taskX {
+    dependsOn(taskY)
+}*/
+//Adding a 'must run after' task ordering
+/*val taskX by tasks.registering {
+    doLast {
+        println("taskX")
+    }
+}
+val taskY by tasks.registering {
+    doLast {
+        println("taskY")
+    }
+}
+taskY {
+    mustRunAfter(taskX)
+}
+*/
+val helloNew by tasks.registering {
+    doLast {
+        println("hello world")
+    }
+}
+
+helloNew {
+    val skipProvider = providers.gradleProperty("skipHello")
+    onlyIf("there is no property skipHello") {
+        !skipProvider.isPresent()
+    }
+}
+
+val compile2 by tasks.registering {
+    doLast {
+        println("We are doing the compile.")
+    }
+}
+
+compile2 {
+    doFirst {
+        // Here you would put arbitrary conditions in real life.
+        if (false) {
+            throw StopExecutionException()
+        }
+    }
+}
+tasks.register("myTask2") {
+    dependsOn(compile2)
+    doLast {
+        println("I am not affected")
+    }
+}
+
+val disableMe by tasks.registering {
+    doLast {
+        println("This should not be printed if the task is disabled.")
+    }
+}
+
+disableMe {
+    enabled = false
+}
+
+tasks.register("hangingTask") {
+    doLast {
+        Thread.sleep(200)
+    }
+    timeout = Duration.ofMillis(500)
+}
+
+//Task rule
+tasks.addRule("Pattern: ping<ID>") {
+    val taskName = this
+    if (startsWith("ping")) {
+        task(taskName) {
+            doLast {
+                println("Pinging: " + (taskName.replace("ping", "")))
+            }
+        }
     }
 }
