@@ -1,6 +1,8 @@
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
+import org.apache.tools.ant.filters.FixCrLfFilter
+import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     id("java")
@@ -393,4 +395,24 @@ tasks.register<Copy>("rename") {
     rename { fileName: String ->
         fileName.uppercase(Locale.getDefault())
     }
+}
+
+//Filtering files as they are copied
+tasks.register<Copy>("filter") {
+    from("src/main")
+    into(layout.buildDirectory.dir("explodedWar"))
+    // Substitute property tokens in files
+    expand("copyright" to "2009", "version" to "2.3.1")
+    // Use some of the filters provided by Ant
+    filter(FixCrLfFilter::class)
+    filter(ReplaceTokens::class, "tokens" to mapOf("copyright" to "2009", "version" to "2.3.1"))
+    // Use a closure to filter each line
+    filter { line: String ->
+        "[$line]"
+    }
+    // Use a closure to remove lines
+    filter { line: String ->
+        if (line.startsWith('-')) null.toString() else line
+    }
+    filteringCharset = "UTF-8"
 }
