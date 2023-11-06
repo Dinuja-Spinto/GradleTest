@@ -172,3 +172,13 @@ tasks.register<Delete>("cleanPdfFiles") {
         include("**/*.pdf")
     })
 }
+
+//How to minimize the number of hard-coded paths in your build
+val archivesDirPath: Provider<Directory> = layout.buildDirectory.dir("archives")
+
+tasks.register<Zip>("packageClasses") {
+    archiveAppendix = "classes"
+    destinationDirectory = archivesDirPath
+
+    from(tasks.compileJava)
+}
