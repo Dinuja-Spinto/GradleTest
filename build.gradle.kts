@@ -484,3 +484,14 @@ tasks.register<Copy>("nestedSpecs") {
         from(configurations.runtimeClasspath)
     }
 }
+//Copying files using the copy() method without up-to-date check
+tasks.register("copyMethod") {
+    doLast {
+        copy {
+            from("src/main/")
+            into(layout.buildDirectory.dir("explodedWar4"))
+            include("**/*.html")
+            include("**/*.jsp")
+        }
+    }
+}
