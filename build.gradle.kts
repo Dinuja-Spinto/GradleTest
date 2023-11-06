@@ -166,3 +166,9 @@ tasks.register<Delete>("myClean") {
     delete(layout.buildDirectory.dir("toArchive3"))
 }
 
+//Deleting files matching a specific pattern
+tasks.register<Delete>("cleanPdfFiles") {
+    delete(fileTree("src").matching {
+        include("**/*.pdf")
+    })
+}
