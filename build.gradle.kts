@@ -160,3 +160,9 @@ tasks.register<Copy>("copyWithTruncate") {
     }
     into(layout.buildDirectory.dir("toArchive"))
 }
+
+//Deleting a directory
+tasks.register<Delete>("myClean") {
+    delete(layout.buildDirectory.dir("toArchive3"))
+}
+
