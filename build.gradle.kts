@@ -121,9 +121,22 @@ tasks.register<Jar>("uberJar") {
 //Manually creating a directory
 tasks.register("ensureDirectory") {
     // Store target directory into a variable to avoid project reference in the configuration cache
-    val directory = file("src/images2")
+    val directory = file("src/images3")
 
     doLast {
-        Files.createDirectories(directory.toPath())
+        //Files.createDirectories(directory.toPath())
+        directory.mkdirs()
+    }
+}
+
+//Moving a directory using the Ant task
+tasks.register("moveReports") {
+    // Store the build directory into a variable to avoid project reference in the configuration cache
+    val dir = buildDir
+
+    doLast {
+        ant.withGroovyBuilder {
+            "move"("file" to "${dir}/toArchive2", "todir" to "${dir}/toArchive3")
+        }
     }
 }
