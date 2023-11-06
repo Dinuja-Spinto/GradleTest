@@ -353,3 +353,19 @@ tasks.named<JavaCompile>("compile") {
     // Add some source directories using a closure
     setSource({ file("src/test/").listFiles() })
 }
+
+//Specifying copy task source files and destination directory
+tasks.register<Copy>("anotherCopyTask") {
+    // Copy everything under src/main/webapp
+    from("src/main/webapp")
+    // Copy a single file
+    from("src/staging/index.html")
+    // Copy the output of a task
+    //from(copyTask)
+    // Copy the output of a task using Task outputs explicitly.
+    from(tasks["copyTaskWithPatterns"].outputs)
+    // Copy the contents of a Zip file
+    from(zipTree("src/main/assets.zip"))
+    // Determine the destination directory later
+    //into({ getDestDir() })
+}
