@@ -416,3 +416,39 @@ tasks.register<Copy>("filter") {
     }
     filteringCharset = "UTF-8"
 }
+
+//Setting permissions for destination files
+//tasks.register<Copy>("permissions") {
+//    from("src/main/webapp")
+//    into(layout.buildDirectory.dir("explodedWar"))
+//    CopySpec.filePermissions {
+//        user {
+//            read = true
+//            execute = true
+//        }
+//        other.execute = false
+//    }
+//    CopySpec.dirPermissions {
+//        unix("r-xr-x---")
+//    }
+//}
+
+//Sharing copy specifications
+val webAssetsSpec: CopySpec = copySpec {
+    from("src/main")
+    include("**/*.html", "**/*.png", "**/*.jpg")
+    rename("(.+)-staging(.+)", "$1$2")
+}
+
+tasks.register<Copy>("copyAssets") {
+    into(layout.buildDirectory.dir("inPlaceApp"))
+    with(webAssetsSpec)
+}
+
+tasks.register<Zip>("distApp") {
+    archiveFileName = "my-app-dist.zip"
+    destinationDirectory = layout.buildDirectory.dir("dists")
+
+    from("src/main")
+    with(webAssetsSpec)
+}
