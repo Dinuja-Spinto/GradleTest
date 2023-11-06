@@ -7,6 +7,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 plugins {
     id("java")
     base
+    war
 }
 
 group = "org.gradleTest"
@@ -500,4 +501,11 @@ tasks.register("copyMethod") {
 tasks.register<Sync>("libs") {
     from(configurations["runtime"])
     into(layout.buildDirectory.dir("libs"))
+}
+
+//Using Copy to deploy a WAR file
+tasks.register<Copy>("deployToTomcat") {
+    from(tasks.war)
+    into(layout.projectDirectory.dir("tomcat/webapps"))
+    doNotTrackState("Deployment directory contains unreadable files")
 }
