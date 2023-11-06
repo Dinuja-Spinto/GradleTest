@@ -136,7 +136,7 @@ tasks.register("moveReports") {
 
     doLast {
         ant.withGroovyBuilder {
-            "move"("file" to "${dir}/toArchive2", "todir" to "${dir}/toArchive3")
+            "move"("file" to "${dir}/toArchive/reports", "todir" to "${dir}/")
         }
     }
 }
@@ -147,4 +147,16 @@ tasks.register<Copy>("copyFromStaging") {
     into(layout.buildDirectory.dir("explodedWar"))
 
     rename("(.+)-staging(.+)", "$1$2")
+}
+
+//Truncating filenames as they are copied
+tasks.register<Copy>("copyWithTruncate") {
+    from(layout.buildDirectory.dir("reports"))
+    rename { filename: String ->
+        if (filename.length > 10) {
+            filename.slice(0..7) + "~" + filename.length
+        }
+        else filename
+    }
+    into(layout.buildDirectory.dir("toArchive"))
 }
