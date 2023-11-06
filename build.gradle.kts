@@ -140,3 +140,11 @@ tasks.register("moveReports") {
         }
     }
 }
+
+//Renaming files as they are copied
+tasks.register<Copy>("copyFromStaging") {
+    from("src/main/java/org/gradleTest/report")
+    into(layout.buildDirectory.dir("explodedWar"))
+
+    rename("(.+)-staging(.+)", "$1$2")
+}
