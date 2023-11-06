@@ -509,3 +509,10 @@ tasks.register<Copy>("deployToTomcat") {
     into(layout.projectDirectory.dir("tomcat/webapps"))
     doNotTrackState("Deployment directory contains unreadable files")
 }
+
+//Using Copy to install an executable
+tasks.register<Copy>("installExecutable") {
+    from("build/toArchive3")
+    into("/usr/local/bin")
+    doNotTrackState("Installation directory contains unrelated files")
+}
