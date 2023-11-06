@@ -342,3 +342,14 @@ tasks.register<JavaCompile>("compile") {
     })
 }
 
+//Appending a set of files
+tasks.named<JavaCompile>("compile") {
+    // Add some source directories use String paths
+    source("src/main/java", "src/main/resources")
+
+    // Add a source directory using a File object
+    source(file("../shared/java"))
+
+    // Add some source directories using a closure
+    setSource({ file("src/test/").listFiles() })
+}
