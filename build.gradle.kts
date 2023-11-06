@@ -495,3 +495,9 @@ tasks.register("copyMethod") {
         }
     }
 }
+
+//Using the Sync task to copy dependencies
+tasks.register<Sync>("libs") {
+    from(configurations["runtime"])
+    into(layout.buildDirectory.dir("libs"))
+}
