@@ -1,4 +1,5 @@
 import java.nio.file.Files
+import java.nio.file.Paths
 
 plugins {
     id("java")
@@ -182,3 +183,30 @@ tasks.register<Zip>("packageClasses") {
 
     from(tasks.compileJava)
 }
+
+//--Locating files--
+
+// Using a relative path
+var configFile = file("src/config.xml")
+//println("*")
+//println(configFile)
+
+// Using an absolute path
+configFile = file(configFile.absolutePath)
+//println("*")
+//println(configFile)
+
+// Using a File object with a relative path
+configFile = file(File("src/config.xml"))
+//println("*")
+//println(configFile)
+
+// Using a java.nio.file.Path object with a relative path
+configFile = file(Paths.get("src", "config.xml"))
+//println("*")
+//println(configFile)
+
+// Using an absolute java.nio.file.Path object
+configFile = file(Paths.get(System.getProperty("user.home")).resolve("global-config.xml"))
+//println("*")
+//println(configFile)
