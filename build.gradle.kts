@@ -242,3 +242,22 @@ tasks.register("list") {
         collection.map { it.relativeTo(projectDirectory.asFile) }.sorted().forEach { println(it) }
     }
 }
+
+//--Using a file collection--
+// Iterate over the files in the collection
+//collection.forEach { file: File ->
+    //println(file.name)
+    //Files.createFile(file.toPath())
+//}
+
+// Convert the collection to various types
+val set: Set<File> = collection.files
+val list: List<File> = collection.toList()
+val path: String = collection.asPath
+//val file: File = collection.singleFile
+//println(path)
+// Add and subtract collections
+val projectLayout: Directory = layout.projectDirectory
+val union: FileCollection = collection + projectLayout.files("src/dinuja2.txt")
+val difference: FileCollection = collection - projectLayout.files("src/file2.txt")
+//println(difference.files)
