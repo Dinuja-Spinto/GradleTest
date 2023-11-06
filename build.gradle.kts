@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "org.gradleTest"
-version = "1.0.0"
+version = "1.0.2"
 
 repositories {
     mavenCentral()
@@ -13,6 +13,9 @@ repositories {
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+
+    //Creating a Java uber or fat JAR
+    implementation("commons-io:commons-io:2.6")
 }
 
 tasks.test {
@@ -99,4 +102,16 @@ tasks.register<Copy>("unpackLibsDirectory") {
         includeEmptyDirs = false
     }
     into(layout.buildDirectory.dir("reso"))
+}
+
+//Creating a Java uber or fat JAR
+tasks.register<Jar>("uberJar") {
+    archiveClassifier = "uber"
+
+    from(sourceSets.main.get().output)
+
+    dependsOn(configurations.runtimeClasspath)
+    from({
+        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+    })
 }
