@@ -469,3 +469,18 @@ tasks.register<Zip>("archiveDistAssets") {
 
     from("src/main", webAssetPatterns)
 }
+
+//Nested copy specs
+tasks.register<Copy>("nestedSpecs") {
+    into(layout.buildDirectory.dir("explodedWar3"))
+    exclude("**/*staging*")
+    from("src/main") {
+        include("**/*.html", "**/*.png", "**/*.jpg")
+    }
+    from(sourceSets.main.get().output) {
+        into("WEB-INF/classes")
+    }
+    into("WEB-INF/lib") {
+        from(configurations.runtimeClasspath)
+    }
+}
