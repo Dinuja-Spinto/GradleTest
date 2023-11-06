@@ -261,3 +261,17 @@ val projectLayout: Directory = layout.projectDirectory
 val union: FileCollection = collection + projectLayout.files("src/dinuja2.txt")
 val difference: FileCollection = collection - projectLayout.files("src/file2.txt")
 //println(difference.files)
+
+//--Filtering a file collection--
+tasks.register("filterTextFiles "){
+    doFirst{
+        val textFiles: FileCollection = collection.filter { f: File ->
+            f.name.endsWith(".txt")
+        }
+
+        textFiles.forEach { file: File ->
+            println(file.name)
+        }
+    }
+}
+
