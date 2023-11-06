@@ -18,7 +18,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
 
     //Creating a Java uber or fat JAR
-    implementation("commons-io:commons-io:2.6")
+    implementation("commons-io:commons-io:2.7")
 }
 
 tasks.test {
@@ -210,3 +210,35 @@ configFile = file(Paths.get("src", "config.xml"))
 configFile = file(Paths.get(System.getProperty("user.home")).resolve("global-config.xml"))
 //println("*")
 //println(configFile)
+
+//--Creating a path relative to a parent project--
+
+val configFile2 = file("$rootDir/shared/config.xml")
+
+//Creating a file collection
+val collection: FileCollection = layout.files(
+        "src/file1.txt",
+        File("src/file2.txt"),
+        listOf("src/file3.csv", "src/file4.csv"),
+        Paths.get("src", "file5.txt")
+)
+
+//Implementing a file collection
+tasks.register("list") {
+    val projectDirectory = layout.projectDirectory
+    doLast {
+        var srcDir: File? = null
+
+        val collection = projectDirectory.files({
+            srcDir?.listFiles()
+        })
+
+        srcDir = projectDirectory.file("src").asFile
+        println("Contents of ${srcDir.name}")
+        collection.map { it.relativeTo(projectDirectory.asFile) }.sorted().forEach { println(it) }
+
+        srcDir = projectDirectory.file("src2").asFile
+        println("Contents of ${srcDir.name}")
+        collection.map { it.relativeTo(projectDirectory.asFile) }.sorted().forEach { println(it) }
+    }
+}
