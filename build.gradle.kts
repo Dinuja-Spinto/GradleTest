@@ -1,5 +1,6 @@
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.*
 
 plugins {
     id("java")
@@ -379,5 +380,17 @@ tasks.register<Copy>("copyTaskWithPatterns") {
     exclude { details: FileTreeElement ->
         details.file.name.endsWith(".html") &&
                 details.file.readText().contains("DRAFT")
+    }
+}
+// Renaming files as they are copied
+tasks.register<Copy>("rename") {
+    from("src/main/java")
+    into(layout.buildDirectory.dir("explodedWar2"))
+    // Use a regular expression to map the file name
+    rename("(.+)-staging(.+)", "$1$2")
+    rename("(.+)-staging(.+)".toRegex().pattern, "$1$2")
+    // Use a closure to convert all file names to upper case
+    rename { fileName: String ->
+        fileName.uppercase(Locale.getDefault())
     }
 }
