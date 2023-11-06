@@ -1,3 +1,5 @@
+import java.nio.file.Files
+
 plugins {
     id("java")
     base
@@ -114,4 +116,14 @@ tasks.register<Jar>("uberJar") {
     from({
         configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
     })
+}
+
+//Manually creating a directory
+tasks.register("ensureDirectory") {
+    // Store target directory into a variable to avoid project reference in the configuration cache
+    val directory = file("src/images2")
+
+    doLast {
+        Files.createDirectories(directory.toPath())
+    }
 }
