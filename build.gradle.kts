@@ -516,3 +516,51 @@ tasks.register<Copy>("installExecutable") {
     into("/usr/local/bin")
     doNotTrackState("Installation directory contains unrelated files")
 }
+
+//Creation of ZIP archive
+tasks.register<Zip>("myZip") {
+    from("src/main")
+    val projectDir = layout.projectDirectory.asFile
+    doLast {
+        println(archiveFileName.get())
+        println(destinationDirectory.get().asFile.relativeTo(projectDir))
+        println(archiveFile.get().asFile.relativeTo(projectDir))
+    }
+}
+
+//Configuration of archive task - custom archive name
+tasks.register<Zip>("myCustomZip") {
+    archiveBaseName = "customName"
+    from("src/main")
+
+    doLast {
+        println(archiveFileName.get())
+    }
+}
+// Configuration of archive task - appendix & classifier
+base {
+    archivesName = "gradle"
+    distsDirectory = layout.buildDirectory.dir("custom-dist")
+    libsDirectory = layout.buildDirectory.dir("custom-libs")
+}
+
+val myyZip by tasks.registering(Zip::class) {
+    from("src/main")
+}
+
+val myOtherZip by tasks.registering(Zip::class) {
+    archiveAppendix = "wrapper"
+    archiveClassifier = "src"
+    from("src/main")
+}
+
+tasks.register("echoNames") {
+    val projectNameString = project.name
+    val archiveFileName = myyZip.flatMap { it.archiveFileName }
+    val myOtherArchiveFileName = myOtherZip.flatMap { it.archiveFileName }
+    doLast {
+        println("Project name: $projectNameString")
+        println(archiveFileName.get())
+        println(myOtherArchiveFileName.get())
+    }
+}
