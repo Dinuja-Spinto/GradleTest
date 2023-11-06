@@ -310,3 +310,14 @@ val sum: FileTree = tree + fileTree("src/test")
 tree.visit {
     println("${this.relativePath} => ${this.file}")
 }*/
+
+//Using an archive as a file tree
+// Create a ZIP file tree using path
+val zip: FileTree = zipTree("src/main/resources/thirdPartyResources.zip")
+
+// Create a TAR file tree using path
+val tar: FileTree = tarTree("thirdPartyResources.tar")
+//zip.forEach{file : File ->
+//    println(file.name)
+//}
+
