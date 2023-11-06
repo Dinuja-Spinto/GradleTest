@@ -452,3 +452,20 @@ tasks.register<Zip>("distApp") {
     from("src/main")
     with(webAssetsSpec)
 }
+
+//Sharing copy patterns only
+val webAssetPatterns = Action<CopySpec> {
+    include("**/*.java", "**/*.png", "**/*.jpg")
+}
+
+tasks.register<Copy>("copyAppAssets") {
+    into(layout.buildDirectory.dir("inPlaceApp2"))
+    from("src/main", webAssetPatterns)
+}
+
+tasks.register<Zip>("archiveDistAssets") {
+    archiveFileName = "distribution-assets.zip"
+    destinationDirectory = layout.buildDirectory.dir("dists2")
+
+    from("src/main", webAssetPatterns)
+}
