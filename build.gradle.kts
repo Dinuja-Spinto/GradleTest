@@ -369,3 +369,15 @@ tasks.register<Copy>("anotherCopyTask") {
     // Determine the destination directory later
     //into({ getDestDir() })
 }
+
+//Selecting the files to copy
+tasks.register<Copy>("copyTaskWithPatterns") {
+    from("src/main/")
+    into(layout.buildDirectory.dir("explodedWar"))
+    include("**/*.html")
+    include("**/*.jsp")
+    exclude { details: FileTreeElement ->
+        details.file.name.endsWith(".html") &&
+                details.file.readText().contains("DRAFT")
+    }
+}
