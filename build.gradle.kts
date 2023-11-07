@@ -136,7 +136,7 @@ tasks.register("ensureDirectory") {
 }
 
 //Moving a directory using the Ant task
-tasks.register("moveReports") {
+/*tasks.register("moveReports") {
     // Store the build directory into a variable to avoid project reference in the configuration cache
     val dir = buildDir
 
@@ -145,7 +145,7 @@ tasks.register("moveReports") {
             "move"("file" to "${dir}/toArchive/reports", "todir" to "${dir}/")
         }
     }
-}
+}*/
 
 //Renaming files as they are copied
 tasks.register<Copy>("copyFromStaging") {
@@ -811,4 +811,23 @@ tasks.register<Delete>("removeInput") {
 //Running the incremental task with an output file removed
 tasks.register<Delete>("removeOutput") {
     delete(layout.buildDirectory.file("outputs/2.txt"))
+}
+
+//Using a read-only and configurable property
+abstract class Greeting : DefaultTask() {
+    @get:Input
+    abstract val greeting: Property<String>
+
+    @Internal
+    val message: Provider<String> = greeting.map { it + " from Gradle" }
+
+    @TaskAction
+    fun printMessage() {
+        logger.quiet(message.get())
+    }
+}
+
+tasks.register<Greeting>("greetingHi") {
+    greeting.set("Hi1")
+    greeting = "Hi2"
 }
