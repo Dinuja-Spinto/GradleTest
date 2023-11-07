@@ -962,3 +962,26 @@ tasks.register<Generator>("generate2") {
 // Configure the values. There is no need to reconfigure the task
 b = 2
 c = 3
+
+//Property conventions
+tasks.register("show") {
+    val property = objects.property(String::class)
+
+    // Set a convention
+    property.convention("convention 1")
+
+    println("value = " + property.get())
+
+    // Can replace the convention
+    property.convention("convention 2")
+    println("value = " + property.get())
+
+    property.set("explicit value")
+
+    // Once a value is set, the convention is ignored
+    property.convention("ignored convention")
+
+    doLast {
+        println("value = " + property.get())
+    }
+}
