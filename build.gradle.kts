@@ -730,3 +730,27 @@ abstract class GreetingTask : DefaultTask() {
 
 // Create a task using the task type
 tasks.register<GreetingTask>("hello4")
+
+//A customizable hello world task
+abstract class GreetingTask2 : DefaultTask() {
+    @get:Input
+    abstract val greeting: Property<String>
+
+    init {
+        greeting.convention("hello from GreetingTask")
+    }
+
+    @TaskAction
+    fun greet() {
+        println(greeting.get())
+    }
+
+}
+
+// Use the default greeting
+tasks.register<GreetingTask2>("hello5")
+
+// Customize the greeting
+tasks.register<GreetingTask2>("greeting") {
+    greeting = "greetings from GreetingTask"
+}
