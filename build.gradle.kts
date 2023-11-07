@@ -718,3 +718,15 @@ tasks.addRule("Pattern: ping<ID>") {
         }
     }
 }
+
+//--Task Class--
+// A hello world task
+abstract class GreetingTask : DefaultTask() {
+    @TaskAction
+    fun greet() {
+        println("hello from GreetingTask")
+    }
+}
+
+// Create a task using the task type
+tasks.register<GreetingTask>("hello4")
