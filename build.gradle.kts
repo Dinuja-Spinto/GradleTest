@@ -3,16 +3,19 @@ import java.nio.file.Paths
 import java.util.*
 import org.apache.tools.ant.filters.FixCrLfFilter
 import org.apache.tools.ant.filters.ReplaceTokens
+import org.gradle.internal.impldep.org.h2.expression.Alias
 import java.time.Duration
 
 plugins {
     id("java")
     base
     war
+    signing
+
 }
 
 group = "org.gradleTest"
-version = "1.0.2"
+//version = "1.0.2"
 
 repositories {
     mavenCentral()
@@ -28,6 +31,29 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+
+//    testLogging {
+//        //showStandardStreams
+//    }
+
+    reports{
+        html.required.set(true)
+        html.outputLocation.set(layout.projectDirectory.dir("abc"))
+    }
+}
+
+tasks.register("runSpecificTests") {
+    dependsOn("test")
+
+    doLast {
+        // Specify the fully qualified name of your test class
+        val testClassName = "src/test/java/NurseTest.java"
+
+        // Run the specific test class
+        tasks.test {
+            useJUnitPlatform ()
+        }
+    }
 }
 
 tasks.register<Copy>("copyReport") {
@@ -62,8 +88,17 @@ tasks.register<Copy>("copyAllPdfReportsForArchiving") {
 
 //Copying an entire directory
 tasks.register<Copy>("copyReportsDirForArchiving") {
-    from(layout.projectDirectory.dir("reports"))
-    into(layout.buildDirectory.dir("toArchive5"))
+    //val root = layout.projectDirectory.dir("reports")
+    //val root2 = layout.projectDirectory.dir("reports3")
+    from(layout.projectDirectory){
+        include("reports/**/*")
+        exclude("reports/sub1")
+    }
+    from(layout.projectDirectory.dir("src")) {
+        include("main/**/*")
+        exclude("main/1.txt")
+    }
+    into(layout.projectDirectory.dir("reports6"))
 }
 
 //Copying an entire directory, including itself
@@ -71,7 +106,7 @@ tasks.register<Copy>("copyReportsDirForArchiving2") {
     from(layout.buildDirectory) {
         include("toArchive5/**")
     }
-    into(layout.buildDirectory.dir("toArchive6"))
+    into(layout.projectDirectory.dir("toArchive3"))
 }
 
 //Archiving a directory as a ZIP
@@ -84,7 +119,7 @@ tasks.register<Zip>("packageDistribution") {
 
 //Using the Base Plugin for its archive name convention
 tasks.register<Zip>("packageDistribution2") {
-    from(layout.projectDirectory.dir("toArchive")) {
+    from(layout.projectDirectory.files("toArchive")) {
         exclude("**/*.pdf")
     }
 
@@ -114,24 +149,35 @@ tasks.register<Copy>("unpackLibsDirectory") {
 
 //Creating a Java uber or fat JAR
 tasks.register<Jar>("uberJar") {
-    archiveClassifier = "uber"
+//    archiveClassifier = "base2"
+//
+//    from(layout.buildDirectory.dir("classes"))
+//
+//    dependsOn(configurations.compileClasspath)
+//    from({
+//        configurations.compileClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+//    })
+//
+//    //into(layout.buildDirectory.dir("reports"))
+    destinationDirectory.set(layout.projectDirectory.dir("customDirectory"))
+    archiveBaseName = "Dinuja3"
+    archiveClassifier = "baseD"
+    from(layout.buildDirectory.dir("classes"))
+    dependsOn(configurations.compileClasspath)
+    from ({ configurations.compileClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) } })
 
-    from(sourceSets.main.get().output)
-
-    dependsOn(configurations.runtimeClasspath)
-    from({
-        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
-    })
+    //file(baseJar).parent
 }
 
 //Manually creating a directory
 tasks.register("ensureDirectory") {
     // Store target directory into a variable to avoid project reference in the configuration cache
-    val directory = file("src/images3")
+    val directory = file("src/images76")
 
     doLast {
-        //Files.createDirectories(directory.toPath())
-        directory.mkdirs()
+        Files.createDirectories(directory.toPath())
+        //directory.mkdir()
+        //directory.mkdir()
     }
 }
 
@@ -736,9 +782,9 @@ abstract class GreetingTask2 : DefaultTask() {
     @get:Input
     abstract val greeting: Property<String>
 
-    init {
+    /*init {
         greeting.convention("hello from GreetingTask")
-    }
+    }*/
 
     @TaskAction
     fun greet() {
@@ -985,3 +1031,35 @@ tasks.register("show") {
         println("value = " + property.get())
     }
 }
+
+
+
+//ant.(
+//        alias: "test",
+//jar: it,
+//keystore: "keystore/test.keystore",
+//storepass: "123456",
+//keypass: "123456",
+//destDir: 'fxclient',
+//preservelastmodified: 'true'
+//)
+
+
+tasks.register<War>("createWar"){
+    destinationDirectory.set(layout.projectDirectory.dir("customDirectoryWar"))
+    archiveBaseName = "warFile"
+    from(layout.buildDirectory.dir("classes"))
+}
+
+tasks.war {
+    webAppDirectory = file("src/main/webapp")
+    from("src/main") // adds a file-set to the root of the archive
+    //webInf { from("src/additionalWebInf") } // adds a file-set to the WEB-INF dir.
+    //webXml = file("src/someWeb.xml") // copies a file to WEB-INF/web.xml
+}
+
+tasks.register("cleanWebapps"){
+    //project.delete(layout.projectDirectory.dir("customDirectoryWar"))
+    delete(layout.projectDirectory.dir("customDirectoryWar/warFile.war"))
+}
+
